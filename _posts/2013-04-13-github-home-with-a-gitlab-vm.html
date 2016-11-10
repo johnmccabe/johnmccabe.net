@@ -1,0 +1,27 @@
+---
+layout: post
+title: Github @ home with a GitLab VM
+date: 2013-04-13 17:47:03.000000000 +01:00
+type: post
+published: true
+status: publish
+categories:
+- Technology
+tags:
+- git
+- gitlab
+- home network
+- nginx
+- ubuntu
+- virtualisation
+meta:
+  _edit_last: '1'
+  _thumbnail_id: '349'
+author: John McCabe
+---
+<p>Today my spring cleaning turned to moving my git repos off the <a href="http://www.readynas.com/?page_id=193">Readynas NV+</a> and onto a small Ubuntu 12.04 VM running <a href="http://gitlab.org/">GitLab</a>.</p>
+<p>An otherwise smooth <a href="https://github.com/gitlabhq/gitlabhq/blob/5-0-stable/doc/install/installation.md">install process</a> hit one final snag at the end which was looking like it would derail the whole move, specifically <a href="http://nginx.org/en/">Nginx</a> throwing 502s whenever I tried to access the GitLab pages.</p>
+<p>Turns out that this was due to the socket connection from Nginx timing out as GitLab has to compile all its assets when you're first attempting to connect, and because the VM I'm using is very small I was hitting this problem head on.</p>
+<p>Thankfully, someone else had run into the same problem a few months ago and a solution was tucked away in a <a href="https://github.com/gitlabhq/gitlabhq/issues/2174#issuecomment-11021304">support thread</a>. You can give ruby a kick by manually requesting that the resources be compiled as a final step in the install process.</p>
+<pre>sudo -u gitlab -H bundle exec rake assets:precompile RAILS_ENV=production</pre>
+<p>This churned away for a few minutes, and once complete I was able to access without any further issues, and with the CPU load remaining nice and low (2-3%).</p>
